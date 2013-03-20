@@ -1,0 +1,42 @@
+TACKLE
+tackleproject.org
+
+Licensed under the MIT License.
+
+
+Overview
+--------
+
+Tackle is a library and set of tools that let a user configure any
+web server (Apache, II7, NGinx) using a single interface -- you no longer
+need to learn the specific configuration commands of a given server to
+make it do what you want it to do.
+
+Tackle can be used as a static configuration store: just distribute the
+.tackle file along with the library in your projects and you (and your
+users) can generate the standard configuration files .htaccess, web.config,
+and NGinx directives directly from the .tackle file.
+
+Tackle can also be used a library to manipulate server configurations in
+real time directly from your software. For example, a project may wish to
+only expose to the outside world the files that it should see (instead of
+making everything visible as many CMSes do) and tell the web server that
+access to a newly created file is now allowed. The resulting software will
+run consistently no matter which server it is currently running under.
+
+
+Sponsors
+--------
+
+The project has been financed by 63reasons and Suite6.
+
+
+Contributors (alphabetical order)
+------------
+
+Mohammed Zeeshan Sharif
+Louis-Eric Simard
+Andy Truong
+
+
+
