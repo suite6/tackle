@@ -76,10 +76,39 @@ class TackleImporter {
 
         $xmlReader = new \XMLReader();
         $xmlReader->XML($this->xml);
-
+        
+        //get xml version information
+//        $xml_ver=null;
+//        preg_match_all('/version=("|\')(?P<version>.+?)("|\')/', $this->xml, $xml_info);
+//        if(isset($xml_info['version'])) $xml_ver = $xml_info['version'][0];
+        
         while ($xmlReader->read()) {
             if ($xmlReader->nodeType == \XMLREADER::ELEMENT) {
                 switch ($xmlReader->name) {
+                    case 'meta':
+                        if (!$xmlReader->isEmptyElement) {
+                            $xmlNodeReader = new \XMLReader();
+                            $xmlNodeReader->XML($xmlReader->readOuterXml());
+                            $lib_ver=null;
+                            $schema_ver=null;
+                            while ($xmlNodeReader->read()) {
+                                if ($xmlNodeReader->nodeType == \XMLREADER::ELEMENT) {
+                                    if ($xmlNodeReader->name == 'LibraryVersion') {
+                                        $lib_ver = $xmlNodeReader->readString();
+                                    }
+                                    if ($xmlNodeReader->name == 'SchemaVersion') {
+                                        $schema_ver = $xmlNodeReader->readString();
+                                    }
+                                }
+                            }
+                            //if the Schema version is more recent than the 
+                            //Library's default schema value
+                            if(version_compare($schema_ver, $config->get_schema_version())==1){
+                                throw new \Exception('Tackle: Provided Schema version '. $schema_ver .' is newer than the library\'s default version '. $config->get_schema_version());
+                            }
+                            unset($xmlNodeReader);
+                        }
+                        break;
                     case 'DefaultPolicy':
                         $config->set_default_policy($xmlReader->readString());
                         break;

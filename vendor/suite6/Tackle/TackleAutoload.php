@@ -42,6 +42,8 @@ spl_autoload_register(function($class) {
             $class = str_replace('\\', '/', $class);
             if (strcmp($class, 'ZipStream') == 0)
                 $path = __DIR__ . '/Generator/' . $class;
+            elseif (strcmp($class, 'Zip') == 0)
+                $path = __DIR__ . '/Generator/' . $class;
             else
                 $path = 'vendor/' . $class;
             if (!require_if_exists($path . '.php'))

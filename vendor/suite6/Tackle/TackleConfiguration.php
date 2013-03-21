@@ -31,9 +31,9 @@ class TackleConfiguration {
     const policy_deny = 'DENY';
     const policy_follow = 'FOLLOW';
     const policy_unfollow = 'UNFOLLOW';
-    const server_apache = 'Apache';
-    const server_iis7 = 'IIS7';
-    const server_nginx = 'Nginx';
+//    const server_apache = 'Apache';
+//    const server_iis7 = 'IIS7';
+//    const server_nginx = 'Nginx';
     const format_xml = 'XML';
     const format_yaml = 'YAML';
     const flag_on = 'ON';
@@ -408,25 +408,31 @@ class TackleConfiguration {
      * as an array. this method will return the configuration as per filled by
      * the user before calling it using the set_ properties of this class
      *
-     * @param $personality can consume any of the following class constants
-     * TackleConfiguration::server_apache for apache (default)
-     * TackleConfiguration::server_nginx for nginx
-     * TackleConfiguration::server_iis7 for IIS7
+     * @param $personality this parameter is the server/generator class name
+     * right now we have support for three servers, apache (default), nginx and
+     * IIS7, so for nginx we can pass Nginx and this will automacitally load 
+     * the corresponding class
      * @throws Exception
      * @return array()
      */
-    public function get_configuration($personality = TackleConfiguration::server_apache) {
-        if (($personality == TackleConfiguration::server_apache)
-                OR ($personality == TackleConfiguration::server_nginx)
-                OR ($personality == TackleConfiguration::server_iis7)) {
+    public function get_configuration($personality='Apache') {
+//        if (($personality == TackleConfiguration::server_apache)
+//                OR ($personality == TackleConfiguration::server_nginx)
+//                OR ($personality == TackleConfiguration::server_iis7)) {
 
             $generator_name = 'suite6\Tackle\Generator\TackleGenerator' . $personality;
-
+            
             $tackleGenerator = new $generator_name($this);
             return $tackleGenerator->generate_configs();
-        } else {
-            throw new \Exception('Tackle: Generator not found');
-        }
+//        } else {
+//            throw new \Exception('Tackle: Generator not found');
+//        }
+    }
+    
+    public function get_config_file($personality='Apache') {
+        $generator_name = 'suite6\Tackle\Generator\TackleGenerator' . $personality;           
+        $tackleGenerator = new $generator_name($this);
+        return $tackleGenerator->generate_configs_file();
     }
 
     /**
@@ -515,76 +521,82 @@ class TackleConfiguration {
      * @throws Exception
      * @return void
      */
-    public function download($personality = TackleConfiguration::server_apache) {
-        if (($personality == TackleConfiguration::server_apache)
-                OR ($personality == TackleConfiguration::server_nginx)
-                OR ($personality == TackleConfiguration::server_iis7)) {
+    public function download($personality = 'Apache') {
+        $configuration = $this->get_config_file($personality);
+        header($configuration['mime-type']);
+        header("Content-Disposition: attachment; filename=". $configuration['file-name']);
+        echo $configuration['content'];
+        
+//        if (($personality == TackleConfiguration::server_apache)
+//                OR ($personality == TackleConfiguration::server_nginx)
+//                OR ($personality == TackleConfiguration::server_iis7)) {
 
-            $resultSet = $this->get_configuration($personality);
-
-            //if server is apache
-            if (($personality == TackleConfiguration::server_apache)) {
-                if (count($resultSet) > 1) {
-                    //create the zip
-                    $zip = new \ZipStream();
-                    foreach ($resultSet as $key => $config) {
-                        if ($key == '[root]')
-                            $filename = str_replace("'", '', str_replace('[root]', '', $config['name']));
-                        else
-                            $filename = substr(str_replace("'", '', str_replace('[root]', '', $config['name'])), 1);
-
-                        $filecontents = $config['content'];
-                        //add files to the zip, passing file contents, not actual files
-                        $zip->addFile($filecontents, $filename);
-                    }
-
-                    //prepare the proper content type
-                    header("Content-type: application/octet-stream");
-                    header("Content-Disposition: attachment; filename=apache.htaccess.zip");
-                    //get the zip content and send it back to the browser
-                    echo $zip->file();
-                } else {
-                    $fileName = '';
-                    $fileContent = '';
-
-                    $fileName = $resultSet['[root]']['name'];
-                    $fileContent = $resultSet['[root]']['content'];
-
-                    header('content-type: text/plain');
-                    header('content-disposition: attachment;filename="' . $fileName . '"');
-                    echo $fileContent;
-                }
-            } //if server is nginx
-            elseif (($personality == TackleConfiguration::server_nginx)) {
-                $fileName = '';
-                $fileContent = '';
-                foreach ($resultSet as $key => $config) {
-                    if ($fileName == '')
-                        $fileName = $config['name'];
-                    if ($fileContent != '')
-                        $fileContent .= PHP_EOL;
-                    $fileContent .= $config['content'];
-                }
-                header('content-type: text/plain');
-                header('content-disposition: attachment;filename="' . $fileName . '"');
-                echo $fileContent;
-            } //is server is iis
-            elseif (($personality == TackleConfiguration::server_iis7)) {
-                $fileName = '';
-                $fileContent = '';
-                foreach ($resultSet as $key => $config) {
-                    $fileName = $config['name'];
-                    $fileContent = $config['content'];
-                }
-                header('content-type: text/plain');
-                header('content-disposition: attachment;filename="' . $fileName . '"');
-                echo $fileContent;
-            }
+//            $resultSet = $this->get_configuration($personality);
+//
+//            //if server is apache
+//            if (($personality == 'Apache')) {
+//                if (count($resultSet) > 1) {
+//                    //create the zip
+//                    require_once 'Generator/ZipStream.php';
+//                    $zip = new \ZipStream();
+//                    foreach ($resultSet as $key => $config) {
+//                        if ($key == '[root]')
+//                            $filename = str_replace("'", '', str_replace('[root]', '', $config['name']));
+//                        else
+//                            $filename = substr(str_replace("'", '', str_replace('[root]', '', $config['name'])), 1);
+//
+//                        $filecontents = $config['content'];
+//                        //add files to the zip, passing file contents, not actual files
+//                        $zip->addFile($filecontents, $filename);
+//                    }
+//
+//                    //prepare the proper content type
+//                    header("Content-type: application/octet-stream");
+//                    header("Content-Disposition: attachment; filename=apache.htaccess.zip");
+//                    //get the zip content and send it back to the browser
+//                    echo $zip->file();
+//                } else {
+//                    $fileName = '';
+//                    $fileContent = '';
+//
+//                    $fileName = $resultSet['[root]']['name'];
+//                    $fileContent = $resultSet['[root]']['content'];
+//
+//                    header('content-type: text/plain');
+//                    header('content-disposition: attachment;filename="' . $fileName . '"');
+//                    echo $fileContent;
+//                }
+//            } //if server is nginx
+//            elseif (($personality == TackleConfiguration::server_nginx)) {
+//                $fileName = '';
+//                $fileContent = '';
+//                foreach ($resultSet as $key => $config) {
+//                    if ($fileName == '')
+//                        $fileName = $config['name'];
+//                    if ($fileContent != '')
+//                        $fileContent .= PHP_EOL;
+//                    $fileContent .= $config['content'];
+//                }
+//                header('content-type: text/plain');
+//                header('content-disposition: attachment;filename="' . $fileName . '"');
+//                echo $fileContent;
+//            } //is server is iis
+//            elseif (($personality == TackleConfiguration::server_iis7)) {
+//                $fileName = '';
+//                $fileContent = '';
+//                foreach ($resultSet as $key => $config) {
+//                    $fileName = $config['name'];
+//                    $fileContent = $config['content'];
+//                }
+//                header('content-type: text/plain');
+//                header('content-disposition: attachment;filename="' . $fileName . '"');
+//                echo $fileContent;
+//            }
 
             //print_r($resultSet);            
-        } else {
-            throw new \Exception('Tackle: Server not found');
-        }
+//        } else {
+//            throw new \Exception('Tackle: Server not found');
+//        }
     }
 
     /**

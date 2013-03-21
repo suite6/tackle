@@ -44,11 +44,18 @@ class TackleGeneratorApache {
     const allow_list = '+Indexes';
     const follow_sym = '+FollowSymLinks';
     const unfollow_sym = '-FollowSymLinks';
+    private $server_name = null;
 
     public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
         $this->settings = $settings;
     }
 
+    public function getName(){
+        if($this->server_name===null)
+            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
+        return $this->server_name;
+    }
+    
     public function generate_configs() {
         $result = array();
         $rootConfig = array();
@@ -369,4 +376,41 @@ class TackleGeneratorApache {
         return $flags_str;
     }
 
+    public function generate_configs_file(){
+        $filename = '';
+        $content = '';
+        $result = array();
+        $configs = $this->generate_configs();
+        
+        if (count($configs) > 1) {
+            //create the zip
+            $zip = new \Zip();
+            foreach ($configs as $key => $config) {
+                if ($key == '[root]')
+                    $filename = str_replace("'", '', str_replace('[root]', '', $config['name']));
+                else
+                    $filename = substr(str_replace("'", '', str_replace('[root]', '', $config['name'])), 1);
+
+                $filecontents = $config['content'];
+                //add files to the zip, passing file contents, not actual files
+                $zip->addFile($filecontents, $filename);
+            }
+            $download_filename = 'apache.htaccess.zip';
+            //prepare the proper content type
+            $ctype = "Content-type: application/octet-stream";
+            //get the zip content and send it back to the browser
+            //$zip->closeStream();
+            $content = $zip->getZipData();
+        } else {
+            $download_filename = $configs['[root]']['name'];
+            $content = $configs['[root]']['content'];
+            
+            $ctype = 'content-type: text/plain';
+        }
+        
+        $result['content'] = $content;
+        $result['mime-type'] = $ctype;
+        $result['file-name'] = $download_filename;
+        return $result;
+    }
 }

@@ -31,11 +31,18 @@ class TackleGeneratorIIS7 {
 
     const config_file_name = 'web.config';
     const user_config_file = '.user.ini';
+    private $server_name = null;
 
     public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
         $this->settings = $settings;
     }
 
+    public function getName(){
+        if($this->server_name===null)
+            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
+        return $this->server_name;
+    }
+    
     public function generate_configs() {
         $result = array();
         $rootConfig = array();
@@ -190,7 +197,7 @@ class TackleGeneratorIIS7 {
                     if (is_array($rule[$condition_counter]->get_condition_combine())) {
                         $all_conditions = '';
                         $xmlWriter->startElement('add');
-                        $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                        $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName() ));
                         $ignore_case = 'false';
                         foreach ($rule[$condition_counter]->get_condition_combine() as $condition) {
                             switch ($condition) {
@@ -228,47 +235,47 @@ class TackleGeneratorIIS7 {
                             case 'OR':
                                 //or is being treated as whole in iis7
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('pattern', $rule[$condition_counter]->get_match_pattern());
                                 $xmlWriter->writeAttribute('ignoreCase', 'false');
                                 $xmlWriter->endElement(); //end add
                                 break;
                             case 'FILE':
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('matchType', 'IsFile');
                                 $xmlWriter->endElement(); //end add
                                 break;
                             case 'DIR':
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('matchType', 'IsDirectory');
                                 $xmlWriter->endElement(); //end add
                                 break;
                             case 'NOT_FILE':
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('matchType', 'IsFile');
                                 $xmlWriter->writeAttribute('negate', 'true');
                                 $xmlWriter->endElement(); //end add
                                 break;
                             case 'NOT_DIR':
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('matchType', 'IsDirectory');
                                 $xmlWriter->writeAttribute('negate', 'true');
                                 $xmlWriter->endElement(); //end add
                                 break;
                             case 'NOT_CASE':
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('pattern', $rule[$condition_counter]->get_match_pattern());
                                 $xmlWriter->writeAttribute('ignoreCase', 'true');
                                 $xmlWriter->endElement(); //end add
                                 break;
                             default:
                                 $xmlWriter->startElement('add');
-                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), \suite6\Tackle\TackleConfiguration::server_iis7));
+                                $xmlWriter->writeAttribute('input', \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()));
                                 $xmlWriter->writeAttribute('pattern', $rule[$condition_counter]->get_match_pattern());
                                 $xmlWriter->writeAttribute('ignoreCase', 'false');
                                 $xmlWriter->endElement(); //end add
@@ -522,4 +529,42 @@ class TackleGeneratorIIS7 {
         return $result;
     }
 
+    public function generate_configs_file(){
+        $filename = '';
+        $content = '';
+        $result = array();
+        $configs = $this->generate_configs();
+        
+        if (count($configs) > 1) {
+            //create the zip
+            $zip = new \Zip();
+            foreach ($configs as $key => $config) {
+                if ($key == '[root]')
+                    $filename = str_replace("'", '', str_replace('[root]', '', $config['name']));
+                else
+                    $filename = substr(str_replace("'", '', str_replace('[root]', '', $config['name'])), 1);
+
+                $filecontents = $config['content'];
+                //add files to the zip, passing file contents, not actual files
+                $zip->addFile($filecontents, $filename);
+            }
+            $download_filename = 'iis.web.confi.zip';
+            //prepare the proper content type
+            $ctype = "Content-type: application/octet-stream";
+            //get the zip content and send it back to the browser
+            //$zip->closeStream();
+            $content = $zip->getZipData();
+        } else {
+            $download_filename = $configs['[root]']['name'];
+            $content = $configs['[root]']['content'];
+            
+            $ctype = 'content-type: text/plain';
+        }
+        
+        $result['content'] = $content;
+        $result['mime-type'] = $ctype;
+        $result['file-name'] = $download_filename;
+        return $result;
+    }
+    
 }

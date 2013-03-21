@@ -73,12 +73,11 @@ class TackleExport {
         $xmlWriter->startDocument('1.0', 'utf8');
         $xmlWriter->writeComment(PHP_EOL . implode(PHP_EOL, $this->settings->getComments()) . PHP_EOL);
         
-        $xmlWriter->startElement('tackle');
+        $xmlWriter->startElement('configuration');
+        $xmlWriter->startElement('meta');
         $xmlWriter->writeElement('LibraryVersion', $this->settings->get_library_version());
         $xmlWriter->writeElement('SchemaVersion', $this->settings->get_schema_version());
-        $xmlWriter->endElement();
-
-        $xmlWriter->startElement('configuration');
+        $xmlWriter->endElement(); //end meta
         $xmlWriter->writeElement('DefaultPolicy', $this->settings->get_default_policy());
         $xmlWriter->writeElement('DefaultDirectoryListingPolicy', $this->settings->get_default_directory_listing_policy());
         $xmlWriter->writeElement('SymbolicLink', $this->settings->get_sym_link());
