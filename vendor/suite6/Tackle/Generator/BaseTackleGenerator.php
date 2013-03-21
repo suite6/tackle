@@ -26,13 +26,15 @@
 namespace suite6\Tackle\Generator;
 
 class BaseTackleGenerator {
- 
+
     protected $server_name = null;
-    
-    public function getName(){
-        if($this->server_name===null)
-            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
+
+    public function getName() {
+        if ($this->server_name === null) {
+            preg_match('/TackleGenerator(?P<server>.*)/', get_called_class(), $matches);
+            $this->server_name = $matches['server'];
+        }
         return $this->server_name;
     }
-    
+
 }
