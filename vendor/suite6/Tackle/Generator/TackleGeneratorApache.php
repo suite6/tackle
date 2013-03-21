@@ -25,7 +25,7 @@
 
 namespace suite6\Tackle\Generator;
 
-class TackleGeneratorApache {
+class TackleGeneratorApache extends BaseTackleGenerator {
 
     private $settings;
     private $default_policy;
@@ -44,17 +44,11 @@ class TackleGeneratorApache {
     const allow_list = '+Indexes';
     const follow_sym = '+FollowSymLinks';
     const unfollow_sym = '-FollowSymLinks';
-    private $server_name = null;
-
+    
     public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
         $this->settings = $settings;
     }
 
-    public function getName(){
-        if($this->server_name===null)
-            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
-        return $this->server_name;
-    }
     
     public function generate_configs() {
         $result = array();

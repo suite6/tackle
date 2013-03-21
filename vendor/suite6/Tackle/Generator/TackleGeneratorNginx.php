@@ -25,7 +25,7 @@
 
 namespace suite6\Tackle\Generator;
 
-class TackleGeneratorNginx {
+class TackleGeneratorNginx extends BaseTackleGenerator {
 
     private $settings;
     private $default_policy;
@@ -45,18 +45,11 @@ class TackleGeneratorNginx {
     const follow_sym = 'off';
     const unfollow_sym = 'on';
     const root_folder = '/[root]/';
-    private $server_name = null;
-
+    
     public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
         $this->settings = $settings;
     }
 
-    public function getName(){
-        if($this->server_name===null)
-            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
-        return $this->server_name;
-    }
-    
     public function generate_configs() {
         $result = array();
         $rootConfig = array();

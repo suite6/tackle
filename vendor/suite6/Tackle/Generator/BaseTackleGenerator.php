@@ -23,28 +23,16 @@
  * 
  */
 
-/*
- * This file is optional and can be used to load the Tackle classes if you don't have
- * an autoloading mechanism in place already. If you do, this will not interfere.
- */
+namespace suite6\Tackle\Generator;
 
-namespace suite6\Tackle;
-
-function require_if_exists($path) {
-    if ((file_exists($path)) && (is_readable($path))) {
-        require_once($path);
-        return TRUE;
+class BaseTackleGenerator {
+ 
+    protected $server_name = null;
+    
+    public function getName(){
+        if($this->server_name===null)
+            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
+        return $this->server_name;
     }
-    return FALSE;
+    
 }
-
-spl_autoload_register(function($class) {
-            $class = str_replace('\\', '/', $class);
-            if (strcmp($class, 'Zip') == 0)
-                $path = __DIR__ . '/Generator/' . $class;
-            else
-                $path = 'vendor/' . $class;
-            if (!require_if_exists($path . '.php'))
-                require_if_exists($path . '.inc');
-        }
-);

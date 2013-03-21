@@ -25,23 +25,17 @@
 
 namespace suite6\Tackle\Generator;
 
-class TackleGeneratorIIS7 {
+class TackleGeneratorIIS7 extends BaseTackleGenerator {
 
     private $settings;
 
     const config_file_name = 'web.config';
     const user_config_file = '.user.ini';
-    private $server_name = null;
-
+    
     public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
         $this->settings = $settings;
     }
 
-    public function getName(){
-        if($this->server_name===null)
-            $this->server_name = str_replace('TackleGenerator', '', basename(__FILE__, '.php'));
-        return $this->server_name;
-    }
     
     public function generate_configs() {
         $result = array();
