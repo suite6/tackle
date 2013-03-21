@@ -104,7 +104,7 @@ class TackleImporter {
                             //if the Schema version is more recent than the 
                             //Library's default schema value
                             if(version_compare($schema_ver, $config->get_schema_version())==1){
-                                throw new \Exception('Tackle: Provided Schema version '. $schema_ver .' is newer than the library\'s default version '. $config->get_schema_version());
+                                throw new \Exception('Tackle: Provided Schema version '. $schema_ver .' is newer than the library\'s supported version '. $config->get_schema_version());
                             }
                             unset($xmlNodeReader);
                         }
