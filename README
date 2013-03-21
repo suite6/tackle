@@ -8,7 +8,7 @@ Overview
 --------
 
 Tackle is a library and set of tools that let a user configure any
-web server (Apache, II7, NGinx) using a single interface -- you no longer
+web server (Apache, IIS7, NGinx) using a single interface -- you no longer
 need to learn the specific configuration commands of a given server to
 make it do what you want it to do.
 
@@ -34,7 +34,7 @@ The project has been financed by 63reasons and Suite6.
 Contributors (alphabetical order)
 ------------
 
-Mohammed Zeeshan Sharif
+Muhammad Zeeshan Sharif
 Louis-Eric Simard
 Andy Truong
 
