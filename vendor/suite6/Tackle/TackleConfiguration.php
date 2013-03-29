@@ -55,7 +55,7 @@ class TackleConfiguration {
     private $php_configs = array();
     private $php_flags = array();
     private $time_to_expiration;
-    private $cache_php_script = false;
+    private $cache_php_script;
     private $gzip_serve_extensions = array();
     private $gzip_per_file = array();
     private $comments = array();
@@ -644,10 +644,10 @@ class TackleConfiguration {
             $combined_settings->set_cache_php_script($this->get_cache_php_script());
 
         //handling of etag
-        if (is_null($this->get_etag()))
-            $combined_settings->set_etag($settings->get_etag());
-        else
+        if (!is_null($this->get_etag()))
             $combined_settings->set_etag($this->get_etag());
+        elseif(!is_null($settings->get_etag()))
+            $combined_settings->set_etag($settings->get_etag());
 
         //handling of etag per file
         $combined_settings->set_etag_files(array_merge($settings->get_etag_files(), $this->get_etag_files()));
