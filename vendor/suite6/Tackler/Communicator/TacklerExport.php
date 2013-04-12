@@ -23,13 +23,13 @@
  * 
  */
 
-namespace suite6\Tackle\Communicator;
+namespace suite6\Tackler\Communicator;
 
-class TackleExport {
+class TacklerExport {
 
     private $settings;
 
-    public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
+    public function __construct(\suite6\Tackler\TacklerConfiguration $settings) {
         $this->settings = $settings;
     }
 
@@ -124,7 +124,7 @@ class TackleExport {
                 $xmlWriter->writeElement('Pattern', $from);
                 $xmlWriter->writeElement('Action', $to);
                 $xmlWriter->endElement(); //end Redirect
-            } elseif (get_class($to) == 'suite6\Tackle\TackleRule') {
+            } elseif (get_class($to) == 'suite6\Tackler\TacklerRule') {
                 $rule = $to->get_rule_condition();
                 $xmlWriter->startElement('Redirect');
                 $xmlWriter->writeElement('Pattern', $to->get_match_pattern());

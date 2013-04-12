@@ -23,9 +23,9 @@
  * 
  */
 
-namespace suite6\Tackle\Generator;
+namespace suite6\Tackler\Generator;
 
-class TackleGeneratorApache extends BaseTackleGenerator {
+class TacklerGeneratorApache extends BaseTacklerGenerator {
 
     private $settings;
     private $default_policy;
@@ -45,7 +45,7 @@ class TackleGeneratorApache extends BaseTackleGenerator {
     const follow_sym = '+FollowSymLinks';
     const unfollow_sym = '-FollowSymLinks';
     
-    public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
+    public function __construct(\suite6\Tackler\TacklerConfiguration $settings) {
         $this->settings = $settings;
     }
 
@@ -136,7 +136,7 @@ class TackleGeneratorApache extends BaseTackleGenerator {
             foreach ($this->settings->get_internal_redirects() as $from => $to) {
                 if (is_string($to)) {
                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $from . ' ' . $to . PHP_EOL;
-                } elseif (get_class($to) == 'suite6\Tackle\TackleRule') {
+                } elseif (get_class($to) == 'suite6\Tackler\TacklerRule') {
                     $rule = $to->get_rule_condition();
                     for ($condition_counter = 0; $condition_counter < count($rule); $condition_counter++) {
                         //if multiple flags are provided
@@ -169,31 +169,31 @@ class TackleGeneratorApache extends BaseTackleGenerator {
                                 }
                             }
                             if ($all_conditions == '')
-                                $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . PHP_EOL;
                             else
-                                $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' [' . $all_conditions . ']' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' [' . $all_conditions . ']' . PHP_EOL;
                         } else {
                             switch ($rule[$condition_counter]->get_condition_combine()) {
                                 case 'OR':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' [OR]' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' [OR]' . PHP_EOL;
                                     break;
                                 case 'FILE':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' -f' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' -f' . PHP_EOL;
                                     break;
                                 case 'DIR':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' -d' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' -d' . PHP_EOL;
                                     break;
                                 case 'NOT_FILE':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' !-f' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' !-f' . PHP_EOL;
                                     break;
                                 case 'NOT_DIR':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' !-d' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' !-d' . PHP_EOL;
                                     break;
                                 case 'NOT_CASE':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' [NC]' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . ' [NC]' . PHP_EOL;
                                     break;
                                 default:
-                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value()) . ' ' . $rule[$condition_counter]->get_match_pattern() . PHP_EOL;
                             }
                         }
                     }
@@ -311,7 +311,7 @@ class TackleGeneratorApache extends BaseTackleGenerator {
 
         //handling etag
         if ($this->settings->get_etag() !== null) {
-            if ($this->settings->get_etag()->get_stat() == \suite6\Tackle\TackleConfiguration::flag_on) {
+            if ($this->settings->get_etag()->get_stat() == \suite6\Tackler\TacklerConfiguration::flag_on) {
                 $rootConfig['content'] .= 'FileETag' . $this->concateFlags($this->settings->get_etag()->get_flags()) . PHP_EOL;
             } else {
                 //if etag stat is off
@@ -323,7 +323,7 @@ class TackleGeneratorApache extends BaseTackleGenerator {
         foreach ($this->settings->get_etag_files() as $file => $etag) {
             $rootConfig['content'] .= '<FilesMatch "' . $file . '">' . PHP_EOL;
             if ($etag === null) {
-                $etag_default = new \suite6\Tackle\TackleEtag();
+                $etag_default = new \suite6\Tackler\TacklerEtag();
                 $rootConfig['content'] .= 'FileETag ' . $this->concateFlags($etag_default->get_flags()) . PHP_EOL;
             }
             else
@@ -351,16 +351,16 @@ class TackleGeneratorApache extends BaseTackleGenerator {
         $flags_str = '';
         foreach ($flags as $flag) {
             switch ($flag) {
-                case \suite6\Tackle\TackleEtag::etag_all:
+                case \suite6\Tackler\TacklerEtag::etag_all:
                     $flags_str.=' All';
                     break;
-                case \suite6\Tackle\TackleEtag::etag_inode:
+                case \suite6\Tackler\TacklerEtag::etag_inode:
                     $flags_str.=' INode';
                     break;
-                case \suite6\Tackle\TackleEtag::etag_mtime:
+                case \suite6\Tackler\TacklerEtag::etag_mtime:
                     $flags_str.=' MTime';
                     break;
-                case \suite6\Tackle\TackleEtag::etag_size:
+                case \suite6\Tackler\TacklerEtag::etag_size:
                     $flags_str.=' Size';
                     break;
                 default:

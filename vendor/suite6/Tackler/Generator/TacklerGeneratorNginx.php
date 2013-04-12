@@ -23,9 +23,9 @@
  * 
  */
 
-namespace suite6\Tackle\Generator;
+namespace suite6\Tackler\Generator;
 
-class TackleGeneratorNginx extends BaseTackleGenerator {
+class TacklerGeneratorNginx extends BaseTacklerGenerator {
 
     private $settings;
     private $default_policy;
@@ -46,7 +46,7 @@ class TackleGeneratorNginx extends BaseTackleGenerator {
     const unfollow_sym = 'on';
     const root_folder = '/[root]/';
     
-    public function __construct(\suite6\Tackle\TackleConfiguration $settings) {
+    public function __construct(\suite6\Tackler\TacklerConfiguration $settings) {
         $this->settings = $settings;
     }
 
@@ -144,7 +144,7 @@ class TackleGeneratorNginx extends BaseTackleGenerator {
         foreach ($this->settings->get_internal_redirects() as $from => $to) {
             if (is_string($to)) {
                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $from . ' ' . $to . ';' . PHP_EOL;
-            } elseif (get_class($to) == 'suite6\Tackle\TackleRule') {
+            } elseif (get_class($to) == 'suite6\Tackler\TacklerRule') {
                 $rule = $to->get_rule_condition();
                 for ($condition_counter = 0; $condition_counter < count($rule); $condition_counter++) {
                     //if multiple flags are provided
@@ -155,37 +155,37 @@ class TackleGeneratorNginx extends BaseTackleGenerator {
                                 $all_conditions.= ',';
                             switch ($condition) {
                                 case 'OR':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~ ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~ ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
                                     $rootConfig['content'] .= '{' . PHP_EOL;
                                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                     $rootConfig['content'] .= '}' . PHP_EOL;
                                     break;
                                 case 'FILE':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' (-f ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' (-f ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                     $rootConfig['content'] .= '{' . PHP_EOL;
                                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                     $rootConfig['content'] .= '}' . PHP_EOL;
                                     break;
                                 case 'DIR':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' (-d ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' (-d ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                     $rootConfig['content'] .= '{' . PHP_EOL;
                                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                     $rootConfig['content'] .= '}' . PHP_EOL;
                                     break;
                                 case 'NOT_FILE':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' (!-f ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' (!-f ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                     $rootConfig['content'] .= '{' . PHP_EOL;
                                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                     $rootConfig['content'] .= '}' . PHP_EOL;
                                     break;
                                 case 'NOT_DIR':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' (!-d ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' (!-d ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                     $rootConfig['content'] .= '{' . PHP_EOL;
                                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                     $rootConfig['content'] .= '}' . PHP_EOL;
                                     break;
                                 case 'NOT_CASE':
-                                    $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~* ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
+                                    $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~* ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
                                     $rootConfig['content'] .= '{' . PHP_EOL;
                                     $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                     $rootConfig['content'] .= '}' . PHP_EOL;
@@ -197,43 +197,43 @@ class TackleGeneratorNginx extends BaseTackleGenerator {
                     } else {
                         switch ($rule[$condition_counter]->get_condition_combine()) {
                             case 'OR':
-                                $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~ ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~ ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;
                                 break;
                             case 'FILE':
-                                $rootConfig['content'] .= self::rewrite_condition . ' (-f ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (-f ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;
                                 break;
                             case 'DIR':
-                                $rootConfig['content'] .= self::rewrite_condition . ' (-d ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (-d ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;
                                 break;
                             case 'NOT_FILE':
-                                $rootConfig['content'] .= self::rewrite_condition . ' (!-f ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (!-f ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;
                                 break;
                             case 'NOT_DIR':
-                                $rootConfig['content'] .= self::rewrite_condition . ' (!-d ' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (!-d ' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;
                                 break;
                             case 'NOT_CASE':
-                                $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~* ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~* ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;
                                 break;
                             default:
-                                $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackle\TackleVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~ ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
+                                $rootConfig['content'] .= self::rewrite_condition . ' (' . \suite6\Tackler\TacklerVariable::get_variable($rule[$condition_counter]->get_match_value(), $this->getName()) . ' ~ ' . $rule[$condition_counter]->get_match_pattern() . ')' . PHP_EOL;
                                 $rootConfig['content'] .= '{' . PHP_EOL;
                                 $rootConfig['content'] .= self::rewrite_rule . ' ' . $to->get_match_pattern() . ' ' . $to->get_action_pattern() . ';' . PHP_EOL;
                                 $rootConfig['content'] .= '}' . PHP_EOL;

@@ -23,9 +23,9 @@
  * 
  */
 
-namespace suite6\Tackle;
+namespace suite6\Tackler;
 
-class TackleCondition {
+class TacklerCondition {
 
     const condition_and = 'AND';
     const condition_or = 'OR';
@@ -37,9 +37,9 @@ class TackleCondition {
 
     private $match_value;
     private $match_pattern;
-    private $condition_combine = TackleCondition::condition_and;
+    private $condition_combine = TacklerCondition::condition_and;
 
-    public function __construct($value, $pattern, $combine = TackleCondition::condition_and) {
+    public function __construct($value, $pattern, $combine = TacklerCondition::condition_and) {
         $this->match_value = $value;
         $this->match_pattern = $pattern;
         $this->condition_combine = $combine;
@@ -90,12 +90,12 @@ class TackleCondition {
     }
 
     public function set_condition_combine($value) {
-        if (($value == TackleCondition::condition_and)
-                OR ($value == TackleCondition::condition_or)
-                OR ($value == TackleCondition::condition_file)
-                OR ($value == TackleCondition::condition_dir)
-                OR ($value == TackleCondition::condition_not_file)
-                OR ($value == TackleCondition::condition_not_dir)
+        if (($value == TacklerCondition::condition_and)
+                OR ($value == TacklerCondition::condition_or)
+                OR ($value == TacklerCondition::condition_file)
+                OR ($value == TacklerCondition::condition_dir)
+                OR ($value == TacklerCondition::condition_not_file)
+                OR ($value == TacklerCondition::condition_not_dir)
                 OR (is_array($value))) {
             $this->condition_combine = $value;
         }

@@ -6,17 +6,17 @@
  */
 
 /**
- * Description of TackleExportYaml
+ * Description of TacklerExportYaml
  *
  * @author Muhammad Zeeshan Sharif
  */
 
-namespace suite6\Tackle\Communicator;
-class TackleExportYaml {
+namespace suite6\Tackler\Communicator;
+class TacklerExportYaml {
 
     private $settings;
     
-    public function __construct(\suite6\Tackle\TackleConfiguration $settings)
+    public function __construct(\suite6\Tackler\TacklerConfiguration $settings)
     {
         $this->settings=$settings;
     }
@@ -99,7 +99,7 @@ class TackleExportYaml {
         foreach ($this->settings->get_internal_redirects() as $from => $to) {
             if(is_string($to)){
                 $list[$from]= $to;
-            } elseif(get_class($to)=='suite6\Tackle\TackleRule') {
+            } elseif(get_class($to)=='suite6\Tackler\TackleRuler') {
                 $rule=$to->get_rule_condition();
                 $rule_array=array();
                 $rule_array['Pattern'] = $to->get_match_pattern();
@@ -192,7 +192,7 @@ class TackleExportYaml {
         
         $comments = '#'. implode(PHP_EOL . '#', $this->settings->getComments()) .PHP_EOL;
         
-        return $comments . \suite6\Tackle\Communicator\Spyc::YAMLDump($config_array);
+        return $comments . \suite6\Tackler\Communicator\Spyc::YAMLDump($config_array);
     }
 
 }

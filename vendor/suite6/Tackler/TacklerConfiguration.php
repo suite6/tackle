@@ -23,9 +23,9 @@
  * 
  */
 
-namespace suite6\Tackle;
+namespace suite6\Tackler;
 
-class TackleConfiguration {
+class TacklerConfiguration {
 
     const policy_allow = 'ALLOW';
     const policy_deny = 'DENY';
@@ -36,7 +36,7 @@ class TackleConfiguration {
     const flag_on = 'ON';
     const flag_off = 'OFF';
 
-    private $default_policy = TackleConfiguration::policy_allow;
+    private $default_policy = TacklerConfiguration::policy_allow;
     private $sym_link;
     private $denied_files = array(); // 403
     private $allowed_files = array();
@@ -47,7 +47,7 @@ class TackleConfiguration {
     private $permanent_redirects = array();  // 301
     private $domain_redirects = array();  // 301
     private $banned_ips = array();
-    private $default_directory_listing_policy = TackleConfiguration::policy_deny;
+    private $default_directory_listing_policy = TacklerConfiguration::policy_deny;
     private $listable_directories = array();
     private $default_directory_handler = 'index.php';
     private $default_404_handler;
@@ -66,7 +66,7 @@ class TackleConfiguration {
 
     public function __construct() {
         $this->denied_files = array('.tackle');
-        $this->comments[] = "Tackle: Configure any web server with only one set of directives";
+        $this->comments[] = "Tackler: Configure any web server with only one set of directives";
         $this->comments[] = "http://tackleproject.org";
         $this->comments[] = "MIT License. By Louis-Eric Simard / Suite6";
     }
@@ -118,7 +118,7 @@ class TackleConfiguration {
     }
 
     public function set_default_policy($value) {
-        if (($value == TackleConfiguration::policy_allow) OR ($value == TackleConfiguration::policy_deny)) {
+        if (($value == TacklerConfiguration::policy_allow) OR ($value == TacklerConfiguration::policy_deny)) {
             $this->default_policy = $value;
         }
     }
@@ -128,7 +128,7 @@ class TackleConfiguration {
     }
 
     public function set_sym_link($value) {
-        if (($value == TackleConfiguration::policy_follow) OR ($value == TackleConfiguration::policy_unfollow)) {
+        if (($value == TacklerConfiguration::policy_follow) OR ($value == TacklerConfiguration::policy_unfollow)) {
             $this->sym_link = $value;
         }
     }
@@ -237,7 +237,7 @@ class TackleConfiguration {
     }
 
     public function set_default_directory_listing_policy($value) {
-        if (($value == TackleConfiguration::policy_allow) OR ($value == TackleConfiguration::policy_deny)) {
+        if (($value == TacklerConfiguration::policy_allow) OR ($value == TacklerConfiguration::policy_deny)) {
             $this->default_directory_listing_policy = $value;
         }
     }
@@ -313,10 +313,10 @@ class TackleConfiguration {
     }
 
     public function set_cache_php_script($flag) {
-        if ($flag == TackleConfiguration::flag_off || $flag == TackleConfiguration::flag_on) {
+        if ($flag == TacklerConfiguration::flag_off || $flag == TacklerConfiguration::flag_on) {
             $this->cache_php_script = $flag;
         } else {
-            throw new \Exception('Tackle: Flag not found');
+            throw new \Exception('Tackler: Flag not found');
         }
     }
 
@@ -346,12 +346,12 @@ class TackleConfiguration {
         return $this->gzip_per_file;
     }
 
-    public function set_etag(TackleEtag $etag) {
+    public function set_etag(TacklerEtag $etag) {
         $this->etag = $etag;
     }
 
     /**
-     * @return TackleEtag
+     * @return TacklerEtag
      * @return type 
      */
     public function get_etag() {
@@ -363,9 +363,9 @@ class TackleConfiguration {
             foreach ($file_list as $etag) {
                 //null is allowed
                 if (!is_null($etag)) {
-                    //only object of TackleEtag class is allowed
+                    //only object of TacklerEtag class is allowed
                     if (gettype($etag) == 'object') {
-                        if (!get_class($etag) == 'TackleEtag')
+                        if (!get_class($etag) == 'TacklerEtag')
                             throw new \Exception("Invalid parameter type passed to property, must be an intance of etag class");
                     } else {
                         throw new \Exception("Invalid parameter type passed to property, must be an intance of etag class");
@@ -401,7 +401,7 @@ class TackleConfiguration {
     /**
      * Returns tackle configuration for specified server in array
      *
-     * this method will return the tackle configuration for the specified server
+     * this method will return the tackler configuration for the specified server
      * as an array. this method will return the configuration as per filled by
      * the user before calling it using the set_ properties of this class
      *
@@ -414,22 +414,22 @@ class TackleConfiguration {
      */
     public function get_configuration($personality='Apache') {
 
-            $generator_name = 'suite6\Tackle\Generator\TackleGenerator' . $personality;
+            $generator_name = 'suite6\Tackler\Generator\TacklerGenerator' . $personality;
             
             $tackleGenerator = new $generator_name($this);
             return $tackleGenerator->generate_configs();
     }
     
     public function get_config_file($personality='Apache') {
-        $generator_name = 'suite6\Tackle\Generator\TackleGenerator' . $personality;           
+        $generator_name = 'suite6\Tackler\Generator\TacklerGenerator' . $personality;           
         $tackleGenerator = new $generator_name($this);
         return $tackleGenerator->generate_configs_file();
     }
 
     /**
-     * Saves the loaded tackle configuration to specified file
+     * Saves the loaded tackler configuration to specified file
      *
-     * this method will save the tackle configuration to the specified file 
+     * this method will save the tackler configuration to the specified file 
      * of the specified server, the configuration could be load use the load
      * method of this class or can be also done by manually filling properties
      * if file name passed is .tackle then default format will be used (xml) and
@@ -446,10 +446,10 @@ class TackleConfiguration {
         $extension = strtolower($extension);
         $config_string = '';
         if ($extension == 'tackle') {
-            $xml_exporter = new Communicator\TackleExport($this);
+            $xml_exporter = new Communicator\TacklerExport($this);
             $config_string = $xml_exporter->get_configuration_xml();
         } else {
-            $communicator = "suite6\Tackle\Communicator\TackleExport" . ucfirst($extension);
+            $communicator = "suite6\Tackler\Communicator\TacklerExport" . ucfirst($extension);
             $unknown_exporter = new $communicator($this);
             $unknown_method = "get_configuration_" . $extension;
             $config_string = $unknown_exporter->$unknown_method();
@@ -472,7 +472,7 @@ class TackleConfiguration {
      * @param $filename Name of the file with path to load tackle configuration
      * 
      * @throws Exception
-     * @return TackleConfiguration
+     * @return TacklerConfiguration
      */
     public function load($filename = ".tackle") {
         if (file_exists($filename)) {
@@ -480,29 +480,29 @@ class TackleConfiguration {
             $extension = strtolower($extension);
             if ($extension == 'tackle') {
                 $xml_string = file_get_contents($filename);
-                $xml_importer = new Communicator\TackleImporter($xml_string);
+                $xml_importer = new Communicator\TacklerImporter($xml_string);
                 return $xml_importer->get_configuration_object();
             } else {
                 $unknown_string = file_get_contents($filename);
-                $communicator = "suite6\Tackle\Communicator\TackleImport" . ucfirst($extension);
+                $communicator = "suite6\Tackler\Communicator\TacklerImport" . ucfirst($extension);
                 $unknown_importer = new $communicator($unknown_string);
                 return $unknown_importer->get_configuration_object();
             }
         } else {
-            throw new \Exception('Tackle: Specified File does not exist');
+            throw new \Exception('Tackler: Specified File does not exist');
         }
     }
 
     /**
-     * Download the loaded tackle configuration for specified server
+     * Download the loaded tackler configuration for specified server
      *
      * this method will make the configuration file(s) downloadable to the user
      * as per the provided server name .htaccess, web.config, nginx.conf
      *
      * @param $personality can consume any of the following class constants
-     * TackleConfiguration::server_apache for apache (default)
-     * TackleConfiguration::server_nginx for nginx
-     * TackleConfiguration::server_iis7 for IIS7
+     * TacklerConfiguration::server_apache for apache (default)
+     * TacklerConfiguration::server_nginx for nginx
+     * TacklerConfiguration::server_iis7 for IIS7
      * 
      * @throws Exception
      * @return void
@@ -521,13 +521,13 @@ class TackleConfiguration {
      * current object and return a new object, current configuration will override
      * the provided configuration (through parameter) if there is a match
      *
-     * @param $settings TackleConfiguration object to prepend with current object
+     * @param $settings TacklerConfiguration object to prepend with current object
      * 
      * @throws Exception
-     * @return TackleConfiguration
+     * @return TacklerConfiguration
      */
-    public function merge(TackleConfiguration $settings) {
-        $combined_settings = new TackleConfiguration();
+    public function merge(TacklerConfiguration $settings) {
+        $combined_settings = new TacklerConfiguration();
 
         //set default policy configuration
         if (is_null($this->get_default_policy()))
@@ -567,7 +567,7 @@ class TackleConfiguration {
         $current_redirect = $this->get_internal_redirects();
         //put all rule's match pattern in $all_rules array to compare later
         foreach ($this->get_internal_redirects() as $key => $rule) {
-            if (!is_string($rule) && get_class($rule) == 'suite6\Tackle\TackleRule') {
+            if (!is_string($rule) && get_class($rule) == 'suite6\Tackler\TacklerRule') {
                 if (!array_key_exists($rule->get_match_pattern(), $all_rules)) {
                     $all_rules[$rule->get_match_pattern()] = $rule->get_action_pattern();
                 }
@@ -579,7 +579,7 @@ class TackleConfiguration {
                 if (!array_key_exists($from, $combined_settings->get_internal_redirects())) {
                     $current_redirect[$from] = $to;
                 }
-            } elseif (get_class($to) == 'suite6\Tackle\TackleRule') {
+            } elseif (get_class($to) == 'suite6\Tackler\TacklerRule') {
                 //check if rule is already there with same match pattern
                 if (!array_key_exists($to->get_match_pattern(), $all_rules)) {
                     $current_redirect[] = $to;

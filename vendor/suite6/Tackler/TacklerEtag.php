@@ -23,16 +23,22 @@
  * 
  */
 
-namespace suite6\Tackle;
+namespace suite6\Tackler;
 
-class TackleRule {
+class TacklerEtag {
 
-    private $match_pattern;
-    private $action_pattern;
-    private $rule_condition = array();
+    const etag_all = 'All';
+    const etag_none = 'None';
+    const etag_mtime = 'MTime';
+    const etag_inode = 'INode';
+    const etag_size = 'Size';
 
-    public function __construct() {
-        
+    private $stat;
+    private $flags = array();
+
+    public function __construct($stat = TacklerConfiguration::flag_on, $flags = array(TacklerEtag::etag_all)) {
+        $this->set_stat($stat);
+        $this->set_flags($flags);
     }
 
     public function __get($name) {
@@ -63,31 +69,42 @@ class TackleRule {
         }
     }
 
-    public function set_match_pattern($value) {
-        $this->match_pattern = $value;
+    public function set_stat($flag) {
+        if ($flag == TacklerConfiguration::flag_off || $flag == TacklerConfiguration::flag_on) {
+            $this->stat = $flag;
+        } else {
+            throw new \Exception('Tackler: Flag not found');
+        }
     }
 
-    public function get_match_pattern() {
-        return $this->match_pattern;
+    public function get_stat() {
+        return $this->stat;
     }
 
-    public function set_action_pattern($value) {
-        $this->action_pattern = $value;
+    public function set_flags($etag_flags) {
+        if (is_array($etag_flags) && count($etag_flags) > 0) {
+            foreach ($etag_flags as $flag) {
+                $this->isValidFlag($flag);
+            }
+            $this->flags = $etag_flags;
+        } else {
+            throw new \Exception('Tackler: Invalid argument passed, must be an array with valid etag flags');
+        }
     }
 
-    public function get_action_pattern() {
-        return $this->action_pattern;
+    public function get_flags() {
+        return $this->flags;
     }
 
-    public function set_rule_condition(array $condition_list) {
-        if (is_array($condition_list))
-            $this->rule_condition = $condition_list;
-        else
-            throw new \Exception("Invalid parameter type passed to property, must be an array");
-    }
-
-    public function get_rule_condition() {
-        return $this->rule_condition;
+    private function isValidFlag($flag) {
+        if ($flag == TacklerEtag::etag_all
+                || $flag == TacklerEtag::etag_inode
+                || $flag == TacklerEtag::etag_mtime
+                || $flag == TacklerEtag::etag_size) {
+            return true;
+        } else {
+            throw new \Exception('Tackler: Invalid argument passed, must be a valid etag flags');
+        }
     }
 
 }

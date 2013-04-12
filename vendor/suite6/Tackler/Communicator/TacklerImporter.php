@@ -23,9 +23,9 @@
  * 
  */
 
-namespace suite6\Tackle\Communicator;
+namespace suite6\Tackler\Communicator;
 
-class TackleImporter {
+class TacklerImporter {
 
     private $xml;
 
@@ -69,10 +69,10 @@ class TackleImporter {
      * Returns the identified Role
      *
      * @throws Exception
-     * @return suite6\Tackle\TackleConfiguration
+     * @return suite6\Tackler\TacklerConfiguration
      */
     public function get_configuration_object() {
-        $config = new \suite6\Tackle\TackleConfiguration();
+        $config = new \suite6\Tackler\TacklerConfiguration();
 
         $xmlReader = new \XMLReader();
         $xmlReader->XML($this->xml);
@@ -104,7 +104,7 @@ class TackleImporter {
                             //if the Schema version is more recent than the 
                             //Library's default schema value
                             if(version_compare($schema_ver, $config->get_schema_version())==1){
-                                throw new \Exception('Tackle: Provided Schema version '. $schema_ver .' is newer than the library\'s supported version '. $config->get_schema_version());
+                                throw new \Exception('Tackler: Provided Schema version '. $schema_ver .' is newer than the library\'s supported version '. $config->get_schema_version());
                             }
                             unset($xmlNodeReader);
                         }
@@ -248,12 +248,12 @@ class TackleImporter {
                                                                 }
                                                             }
                                                             if ($condition_comparison !== null && $condition_pattern !== null) {
-                                                                $condition_list[] = new \suite6\Tackle\TackleCondition($condition_comparison, $condition_pattern, explode(',', $condition_flags));
+                                                                $condition_list[] = new \suite6\Tackler\TacklerCondition($condition_comparison, $condition_pattern, explode(',', $condition_flags));
                                                             }
                                                         }
                                                     }
                                                 }
-                                                $rule = new \suite6\Tackle\TackleRule();
+                                                $rule = new \suite6\Tackler\TacklerRule();
                                                 $rule->set_match_pattern($pattern);
                                                 $rule->set_action_pattern($action);
                                                 $rule->set_rule_condition($condition_list);
@@ -518,7 +518,7 @@ class TackleImporter {
                             }
                             unset($xmlFlagNodeReader);
                             unset($xmlNodeReader);
-                            $etag_settings = new \suite6\Tackle\TackleEtag($stat, $list);
+                            $etag_settings = new \suite6\Tackler\TacklerEtag($stat, $list);
                             $config->set_etag($etag_settings);
                         }
                         break;
@@ -552,7 +552,7 @@ class TackleImporter {
                                         }
                                         unset($xmlFlagNodeReader);
                                         unset($xmlFileReader);
-                                        $list[$filename] = new \suite6\Tackle\TackleEtag($stat, $flag_list);
+                                        $list[$filename] = new \suite6\Tackler\TacklerEtag($stat, $flag_list);
                                     } else {
                                         $list[$filename] = null;
                                     }

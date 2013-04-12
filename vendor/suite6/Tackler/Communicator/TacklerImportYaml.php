@@ -6,13 +6,13 @@
  */
 
 /**
- * Description of TackleImportYaml
+ * Description of TacklerImportYaml
  *
  * @author Muhammad Zeeshan Sharif
  */
 
-namespace suite6\Tackle\Communicator;
-class TackleImportYaml {
+namespace suite6\Tackler\Communicator;
+class TacklerImportYaml {
 
     private $yaml;
     
@@ -57,14 +57,14 @@ class TackleImportYaml {
      * Returns the identified Role
      *
      * @throws Exception
-     * @return suite6\Tackle\TackleConfiguration
+     * @return suite6\Tackler\TacklerConfiguration
      */
     public function get_configuration_object()
     {
-        $config=new \suite6\Tackle\TackleConfiguration();
+        $config=new \suite6\Tackler\TacklerConfiguration();
         
-        $spycReader=new \suite6\Tackle\Communicator\Spyc();
-        $yaml_array=\suite6\Tackle\Communicator\Spyc::YAMLLoadString($this->yaml);
+        $spycReader=new \suite6\Tackler\Communicator\Spyc();
+        $yaml_array=\suite6\Tackler\Communicator\Spyc::YAMLLoadString($this->yaml);
         
         $config->set_default_policy($yaml_array['DefaultPolicy']);
         $config->set_default_directory_listing_policy($yaml_array['DefaultDirectoryListingPolicy']);
@@ -73,7 +73,7 @@ class TackleImportYaml {
         $config->set_default_404_handler($yaml_array['Default404Handler']);
         $config->set_default_403_handler($yaml_array['Default403Handler']);
         $config->set_time_to_expiration($yaml_array['TimeToExpiration']);
-        $config->set_cache_php_script($yaml_array['CachePHPScript']==1?\suite6\Tackle\TackleConfiguration::flag_on:\suite6\Tackle\TackleConfiguration::flag_off);
+        $config->set_cache_php_script($yaml_array['CachePHPScript']==1?\suite6\Tackler\TacklerConfiguration::flag_on:\suite6\Tackler\TacklerConfiguration::flag_off);
         $config->set_banned_ips($yaml_array['BannedIps']);
         $config->set_denied_files($yaml_array['DeniedFile']);
         $config->set_allowed_files($yaml_array['AllowedFile']);
@@ -92,12 +92,12 @@ class TackleImportYaml {
             if(is_string($to)){
                 $rule_array[$from] = $to;
             } else if (is_array($to)) {
-                $rule=new \suite6\Tackle\TackleRule();
+                $rule=new \suite6\Tackler\TacklerRule();
                 $rule->set_match_pattern($to['Pattern']);
                 $rule->set_action_pattern($to['Action']);
                 $condition_array = array();
                 foreach ($to['Condition'] as $condition) {
-                    $condition_array[] = new \suite6\Tackle\TackleCondition($condition['Compare'], $condition['Pattern'], $condition['Flags']);
+                    $condition_array[] = new \suite6\Tackler\TacklerCondition($condition['Compare'], $condition['Pattern'], $condition['Flags']);
                 }
                 $rule->set_rule_condition($condition_array);
                 $rule_array[] = $rule;
@@ -107,7 +107,7 @@ class TackleImportYaml {
         
         //importing etag back
         if(isset($yaml_array['ETag'])){
-            $etag_settings = new \suite6\Tackle\TackleEtag($yaml_array['ETag']['State']==1?\suite6\Tackle\TackleConfiguration::flag_on:\suite6\Tackle\TackleConfiguration::flag_off, $yaml_array['ETag']['Flags']);
+            $etag_settings = new \suite6\Tackler\TacklerEtag($yaml_array['ETag']['State']==1?\suite6\Tackler\TacklerConfiguration::flag_on:\suite6\Tackler\TacklerConfiguration::flag_off, $yaml_array['ETag']['Flags']);
             $config->set_etag($etag_settings);
         }
         
@@ -115,7 +115,7 @@ class TackleImportYaml {
         $list = array();
         foreach ($yaml_array['EtagFiles'] as $key => $value) {
             if(is_array($value)) {
-                $etag_settings = new \suite6\Tackle\TackleEtag($value['State']==1?\suite6\Tackle\TackleConfiguration::flag_on:\suite6\Tackle\TackleConfiguration::flag_off, $value['Flags']);
+                $etag_settings = new \suite6\Tackler\TacklerEtag($value['State']==1?\suite6\Tackler\TacklerConfiguration::flag_on:\suite6\Tackler\TacklerConfiguration::flag_off, $value['Flags']);
                 $list[$key] = $etag_settings;
             } else {
                 $list[$key] = $value;

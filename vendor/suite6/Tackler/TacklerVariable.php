@@ -23,9 +23,9 @@
  * 
  */
 
-namespace suite6\Tackle;
+namespace suite6\Tackler;
 
-final class TackleVariable {
+final class TacklerVariable {
 
     private static $server_var = array(
         'Apache' => array('%{REQUEST_URI}', '%{QUERY_STRING}', '%{REQUEST_FILENAME}', '%{HTTP_HOST}', '%{SERVER_PORT}'),
@@ -34,17 +34,17 @@ final class TackleVariable {
     );
 
     public static function get_variable($var_name, $personality = 'Apache') {
-//        if (($personality == TackleConfiguration::server_apache)
-//                OR ($personality == TackleConfiguration::server_nginx)
-//                OR ($personality == TackleConfiguration::server_iis7)) {
+//        if (($personality == TacklerConfiguration::server_apache)
+//                OR ($personality == TacklerConfiguration::server_nginx)
+//                OR ($personality == TacklerConfiguration::server_iis7)) {
 
             $servers = self::$server_var;
 
-//            if (($key = array_search($var_name, $servers[TackleConfiguration::server_apache])) !== false) {
+//            if (($key = array_search($var_name, $servers[TacklerConfiguration::server_apache])) !== false) {
 //                return $servers[$personality][$key];
-//            } elseif (($key = array_search($var_name, $servers[TackleConfiguration::server_iis7])) !== false) {
+//            } elseif (($key = array_search($var_name, $servers[TacklerConfiguration::server_iis7])) !== false) {
 //                return $servers[$personality][$key];
-//            } elseif (($key = array_search($var_name, $servers[TackleConfiguration::server_nginx])) !== false) {
+//            } elseif (($key = array_search($var_name, $servers[TacklerConfiguration::server_nginx])) !== false) {
 //                return $servers[$personality][$key];
 //            } else {
 //                return $var_name;
@@ -59,7 +59,7 @@ final class TackleVariable {
                 return $var_name;
             }
 //        } else {
-//            throw new \Exception('Tackle: Invalid Server Provided');
+//            throw new \Exception('Tackler: Invalid Server Provided');
 //        }
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace suite6\Tackle\Communicator;
+namespace suite6\Tackler\Communicator;
 
 /**
    * Spyc -- A Simple PHP YAML Class
